@@ -18,6 +18,3 @@ runs:
   args:
     - "--accounts=${{ inputs.accounts }}"
     - "--months=${{ inputs.months }}"
-
-
-''
