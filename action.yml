@@ -1,0 +1,23 @@
+name: 'OPG Infrastructure Costing'
+description: 'Generate high level costing report for AWS accounts'
+inputs:
+  accounts:
+    required: true
+    default: '[{\"arn\": \"arn:aws:iam::$account:role/$role\"}]'
+  months:
+    required: true
+    default: 6
+    description: Number of months on include in the report
+  directory:
+    required: true
+    default: ${{ github.workspace }}
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - "--accounts=${{ inputs.accounts }}"
+    - "--months=${{ inputs.months }}"
+
+
+''
