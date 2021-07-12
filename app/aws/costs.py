@@ -2,65 +2,24 @@ from typing import Union
 import boto3
 import datetime
 from dateutil.relativedelta import relativedelta
+from .base import base
 
-class costs:
-    arn: str
-    region:str
+class costs(base):
     label: str
-    session: None
+    data: dict
 
     def __init__(self, arn: str, region:str, label: str) -> None:
-        """
-        Generate self and attach params to self
-        """
-        self.arn = arn
+        super().__init__(arn, region)
         self.label = label
-        self.region = region
         return
 
-    def auth(self):
-        """
-        Set session using creds from env, so requires
-        aws-vault usage for local dev
-        """
-        sts = boto3.client(
-            'sts',
-            region_name=self.region)
-
-        self.session = sts.assume_role(
-            RoleArn=self.arn,
-            RoleSessionName='cost_data_sts_session',
-            DurationSeconds=900)
-        return self
-
-    def client(self):
-        """
-        Return boto3 client for cost explorer
-        """
-        return boto3.client(
-            'ce',
-            region_name = self.region,
-            aws_access_key_id = self.session['Credentials']['AccessKeyId'],
-            aws_secret_access_key = self.session['Credentials']['SecretAccessKey'],
-            aws_session_token = self.session['Credentials']['SessionToken']
-        )
-
-    def dates(self, months: int):
-        """
-        Return start and end dates based on (current time - months)
-        """
-        end = datetime.datetime.utcnow()
-        start = end - relativedelta(months= months)
-        start = start.replace(day=1, hour=0, minute=0, second=0)
-        return start, end
-
-
-    def usage(self, client, months: int):
+    def usage(self, client, start:datetime, end:datetime) -> Union[dict, None]:
         """
         Get costs of the used resources during this time period
+        in a dict with year-month (2021-07) key and dict of {'used': float}
         """
-        start, end = self.dates(months)
-        return client.get_cost_and_usage(
+
+        response =  client.get_cost_and_usage(
             Granularity = 'MONTHLY',
             TimePeriod = {
                 'Start': start.strftime('%Y-%m-%d'),
@@ -73,12 +32,26 @@ class costs:
             }]
         )
 
-    def forecast(self, client) -> Union[None, float]:
+        results = {}
+
+        if 'ResultsByTime' in response:
+            for item in response['ResultsByTime']:
+                # trim off the day
+                month = item['TimePeriod']['Start'][0:-3]
+                value = item['Groups'][0]['Metrics']['UnblendedCost']['Amount']
+                results[month] = {'used': float(value) }
+
+            return results
+
+        return None
+
+
+    def forecast(self, client, start) -> Union[None, float]:
         """
         Get forecast data for the rest of this current month & return
         its value
         """
-        start = datetime.datetime.utcnow()
+        # always returns the last day of the month
         end = start + relativedelta(days=31)
         response = client.get_cost_forecast(
             Granularity = 'MONTHLY',
@@ -94,13 +67,17 @@ class costs:
         return None
 
 
-    def get(self, months: int):
+    def get(self, start: datetime, end: datetime) -> dict:
         """
+        Get used & forecasted costs for the time period passed
+        in for the already set arn & label
         """
-
-        client = self.client()
-
-        usage = self.usage(client, months)
-        forecast = self.forecast(client)
-
+        client = self.client('ce')
+        usage = self.usage(client, start, end)
+        # forecast can only start from today
+        forecast = self.forecast(client, end)
+        # append forecast for the rest of the month in to this dict
+        usage[end.strftime('%Y-%m')]['forecast'] = forecast
+        # set data as this result, also return it
+        self.data = usage
         return usage
