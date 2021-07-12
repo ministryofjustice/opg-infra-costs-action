@@ -1,21 +1,21 @@
 #!/usr/bin/env python
-
 import sys
 import pprint
 
-from input.input_handler import input_handler
+from input.handler import handler
 from aws.costs import costs
 
 pp = pprint.PrettyPrinter(indent=4)
 
 def main():
-    io = input_handler()
+    io = handler()
     args = io.parser().parse().args
+    start, end = io.dates(args.months)
 
     for account in args.accounts:
         pp.pprint(account)
         cost = costs(account['arn'], args.aws_region, account['label'])
-        data = cost.auth().get(args.months)
+        data = cost.auth().get(start, end)
         pp.pprint(data)
 
 

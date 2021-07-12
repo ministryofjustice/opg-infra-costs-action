@@ -1,13 +1,24 @@
 import argparse
 import json
+import datetime
+from dateutil.relativedelta import relativedelta
 
-class input_handler:
+class handler:
     """
     Class to handler all the input variables and parsing passed to the main command.
     """
     args: argparse.Namespace
     arg_parser: argparse.ArgumentParser
     arg_parser_description: str = 'Generate cost table for specificed aws accounts.'
+
+    def dates(self, months: int):
+        """
+        Return start and end dates based on (current time - months)
+        """
+        end = datetime.datetime.utcnow()
+        start = end - relativedelta(months= months)
+        start = start.replace(day=1, hour=0, minute=0, second=0)
+        return start, end
 
     def parser(self):
         """
