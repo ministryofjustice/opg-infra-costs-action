@@ -3,11 +3,17 @@ description: 'Generate high level costing report for AWS accounts'
 inputs:
   accounts:
     required: true
-    default: '[{\"arn\": \"arn:aws:iam::$account:role/$role\"}]'
+    default: '[{\"arn\": \"arn:aws:iam::ACCOUNT:role/ROLE\", \"label\": \"NAME\", \"region\": \"eu-west-1\" }]'
   months:
     required: true
     default: 6
-    description: Number of months on include in the report
+    description: Number of months to include in the report
+  aws_access_key_id:
+    required: true
+    description: AWS access key for authentication
+  aws_secret_access_key:
+    required: true
+    description: AWS secret access key for authentication
   directory:
     required: true
     default: ${{ github.workspace }}
@@ -16,5 +22,8 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - "--aws-access-key-id=${{ inputs.aws_access_key_id }}"
+    - "--aws-secret-access-key=${{ inputs.aws_secret_access_key }}"
+    - "--aws-region=${{ inputs.aws_region }}"
     - "--accounts=${{ inputs.accounts }}"
     - "--months=${{ inputs.months }}"

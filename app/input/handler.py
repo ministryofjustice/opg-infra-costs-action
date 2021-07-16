@@ -35,11 +35,7 @@ class handler:
                     help='AWS secret for auth',
                     required=True
                     )
-        self.arg_parser.add_argument(
-                    '--aws-region',
-                    help='AWS region',
-                    default='eu-west-1',
-                    )
+
         self.arg_parser.add_argument(
                     '--months',
                     default=6,
@@ -48,7 +44,7 @@ class handler:
                     )
         self.arg_parser.add_argument(
                     '--accounts',
-                    default='[]',
+                    required=True,
                     type=json.loads,
                     help='JSON array of objects containing all account data',
                     )
@@ -66,7 +62,7 @@ class handler:
         if len(args.accounts) < 1:
             raise Exception('input_handler', 'Account input parameter invalid')
         else:
-            filtered = list(filter(lambda acc: 'arn' in acc and 'label' in acc, args.accounts))
+            filtered = list(filter(lambda acc: 'arn' in acc and 'label' in acc and 'region' in acc, args.accounts))
             if len(filtered) != len(args.accounts):
                 raise Exception('input_handler', 'One of the accounts passed does not contain both arn & label attributes.')
 

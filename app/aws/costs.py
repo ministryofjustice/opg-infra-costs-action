@@ -1,8 +1,11 @@
 from typing import Union
-import boto3
 import datetime
 from dateutil.relativedelta import relativedelta
 from .base import base
+
+import pprint
+
+pp = pprint.PrettyPrinter(indent=4)
 
 class costs(base):
     label: str
@@ -16,7 +19,18 @@ class costs(base):
     def usage(self, client, start:datetime, end:datetime) -> Union[dict, None]:
         """
         Get costs of the used resources during this time period
-        in a dict with year-month (2021-07) key and dict of {'used': float}
+        in a dict with year-month key and value of dict again:
+
+        {
+            'arn': 'arn:aws:iam::$account:role/billing',
+            'region': 'eu-west-1',
+            'label': 'commonName',
+            'costs': {
+                '2021-07': {'used': 123.45, 'forecast': 456.0},
+                '2021-08': {'used': 765.12}
+            }
+        }
+
         """
 
         response =  client.get_cost_and_usage(
@@ -32,14 +46,14 @@ class costs(base):
             }]
         )
 
-        results = {}
+        results = {'arn': self.arn, 'region': self.region, 'label': self.label, 'costs': {}}
 
         if 'ResultsByTime' in response:
             for item in response['ResultsByTime']:
                 # trim off the day
                 month = item['TimePeriod']['Start'][0:-3]
                 value = item['Groups'][0]['Metrics']['UnblendedCost']['Amount']
-                results[month] = {'used': float(value) }
+                results['costs'][month] = {'used': float(value), 'forecast': 0.0 }
 
             return results
 
@@ -61,8 +75,8 @@ class costs(base):
             },
             Metric='UNBLENDED_COST'
         )
-        if 'Total' in response:
-            return float(response['Total']['Amount'])
+        if 'ForecastResultsByTime' in response:
+            return float(response['ForecastResultsByTime'][0]['MeanValue'])
 
         return None
 
@@ -77,7 +91,7 @@ class costs(base):
         # forecast can only start from today
         forecast = self.forecast(client, end)
         # append forecast for the rest of the month in to this dict
-        usage[end.strftime('%Y-%m')]['forecast'] = forecast
+        usage['costs'][end.strftime('%Y-%m')]['forecast'] = forecast
         # set data as this result, also return it
         self.data = usage
         return usage
