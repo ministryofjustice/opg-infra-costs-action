@@ -67,3 +67,6 @@ typings/
 .next
 
 **__pycache**
+
+**.costs.json
+cost_report.html.md.erb

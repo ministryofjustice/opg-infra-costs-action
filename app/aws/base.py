@@ -1,7 +1,5 @@
 from typing import Union
 import boto3
-import datetime
-
 
 class base:
     arn: str
@@ -10,7 +8,7 @@ class base:
 
     def __init__(self, arn: str, region:str) -> None:
         """
-        Generate self and attach params to self
+        Generate base class that provides auth for the ARN and region passed
         """
         self.arn = arn
         self.region = region

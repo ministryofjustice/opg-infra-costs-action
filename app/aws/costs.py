@@ -3,18 +3,16 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from .base import base
 
-import pprint
-
-pp = pprint.PrettyPrinter(indent=4)
 
 class costs(base):
-    label: str
     data: dict
+    label: str
 
-    def __init__(self, arn: str, region:str, label: str) -> None:
+    def __init__(self, arn: str, region:str, label:str) -> None:
         super().__init__(arn, region)
         self.label = label
         return
+
 
     def usage(self, client, start:datetime, end:datetime) -> Union[dict, None]:
         """
@@ -24,7 +22,7 @@ class costs(base):
         {
             'arn': 'arn:aws:iam::$account:role/billing',
             'region': 'eu-west-1',
-            'label': 'commonName',
+            'label': 'LABEL',
             'costs': {
                 '2021-07': {'used': 123.45, 'forecast': 456.0},
                 '2021-08': {'used': 765.12}
@@ -46,7 +44,7 @@ class costs(base):
             }]
         )
 
-        results = {'arn': self.arn, 'region': self.region, 'label': self.label, 'costs': {}}
+        results = {'label': self.label,'arn': self.arn, 'region': self.region, 'costs': {}}
 
         if 'ResultsByTime' in response:
             for item in response['ResultsByTime']:
