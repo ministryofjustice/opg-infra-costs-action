@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - account: 936779158973
+          - arn: "arn:aws:iam::936779158973:role/billing"
             label: refunds
             environment: development
 
@@ -20,7 +20,7 @@ jobs:
       - run: |
           echo "Label: ${{ matrix.label }}"
           echo "Environment: ${{ matrix.environment }}"
-          echo "Account: ${{ matrix.account }}"
+          echo "Account: ${{ matrix.arn }}"
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
