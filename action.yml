@@ -1,19 +1,21 @@
 name: 'OPG Infrastructure Costing'
 description: 'Generate high level costing report for AWS accounts'
 inputs:
-  accounts:
+  arn:
     required: true
-    default: '[{\"arn\": \"arn:aws:iam::ACCOUNT:role/ROLE\", \"label\": \"NAME\", \"region\": \"eu-west-1\" }]'
+    description: 'The AWS ARN string to fetch cost data for'
+  label:
+    required: true
+    description: 'A label to attach to the cost data for grouping'
+  region:
+    default: 'eu-west-1'
+    description: 'AWS region'
   months:
-    required: true
     default: 6
     description: Number of months to include in the report
-  aws_access_key_id:
-    required: true
-    description: AWS access key for authentication
-  aws_secret_access_key:
-    required: true
-    description: AWS secret access key for authentication
+  report:
+    default: false
+    description: 'If set to true, generate a single combined markdown files out of the raw data files stored in $directory'
   directory:
     required: true
     default: ${{ github.workspace }}
@@ -22,8 +24,9 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - "--aws-access-key-id=${{ inputs.aws_access_key_id }}"
-    - "--aws-secret-access-key=${{ inputs.aws_secret_access_key }}"
-    - "--aws-region=${{ inputs.aws_region }}"
-    - "--accounts=${{ inputs.accounts }}"
+    - "--arn=${{ inputs.arn }}"
+    - "--label=${{ inputs.label }}"
+    - "--default=${{ inputs.default }}"
     - "--months=${{ inputs.months }}"
+    - "--generate-report=${{ inputs.report }}"
+    - "--prefix=${{ github.run_id }}-${{ github.run_number }}"
