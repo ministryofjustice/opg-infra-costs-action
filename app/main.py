@@ -12,10 +12,6 @@ from aws.costs import costs
 
 pp = pprint.PrettyPrinter(indent=4)
 
-# set the locales - use USA as charged in $
-# locale.setlocale(locale.LC_ALL, 'en_US')
-locale.setlocale(locale.LC_ALL, 'en_GB')
-
 
 def currency(value):
     """
