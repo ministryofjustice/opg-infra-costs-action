@@ -49,9 +49,10 @@ class costs(base):
                             'Category': 'costs',
                             'SubCategory': 'aws',
                             'environment': self.environment,
-                            'Time': int(date.timestamp() * 1000),
-                            'MeasureName': row['Keys'][0],
-                            'MeasureValue': row['Metrics']['UnblendedCost']['Amount']
+                            'Time': str(int(date.timestamp() * 1000)),
+                            'MeasureName': self.service_name_correction(row['Keys'][0]),
+                            'MeasureValue': row['Metrics']['UnblendedCost']['Amount'],
+                            "MeasureValueType": "DOUBLE"
                         })
 
             return results

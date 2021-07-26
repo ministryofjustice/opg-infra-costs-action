@@ -40,3 +40,11 @@ class base:
             aws_secret_access_key = self.session['Credentials']['SecretAccessKey'],
             aws_session_token = self.session['Credentials']['SessionToken']
         )
+
+    def service_name_correction(self, name:str) -> str:
+        """
+        Handle name changes over time to allow for mapping of costs
+        """
+        if name is 'Amazon EC2 Container Service':
+            name = "Amazon Elastic Container Service"
+        return name
