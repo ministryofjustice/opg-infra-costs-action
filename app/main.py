@@ -26,19 +26,14 @@ def costdata(io: handler, args: Namespace):
     for each month between the start & end dates.
 
     """
-    date = args.start_date
-    allcosts = []
-    while date < args.end_date:
-        end = date + dateutil.relativedelta.relativedelta(days=1)
-        print(f"[{args.arn}] Getting costs between [{date} - {end}]")
-        awscosts = costs(args.arn, args.region, args.service, args.environment)
-        results = awscosts.auth().get(date, end)
-        # add results to over all data
-        allcosts.extend(results)
-        date = end
-        pp.pprint(len(results))
+    start = args.start_date
+    end = args.end_date
+    print(f"[{args.arn}] Getting costs between [{start} - {end}]")
+    awscosts = costs(args.arn, args.region, args.service, args.environment)
+    results = awscosts.auth().get(start, end)
+    pp.pprint(len(results))
 
-    pp.pprint(allcosts)
+    pp.pprint(results[:10])
 
 
 
