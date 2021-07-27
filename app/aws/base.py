@@ -45,6 +45,6 @@ class base:
         """
         Handle name changes over time to allow for mapping of costs
         """
-        if name is 'Amazon EC2 Container Service':
+        if name == 'Amazon EC2 Container Service':
             name = "Amazon Elastic Container Service"
         return name
