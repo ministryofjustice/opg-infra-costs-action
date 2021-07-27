@@ -47,4 +47,4 @@ class base:
         """
         if name == 'Amazon EC2 Container Service':
             name = "Amazon Elastic Container Service"
-        return name
+        return name.replace(" ", "_")
