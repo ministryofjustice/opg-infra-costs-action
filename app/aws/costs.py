@@ -12,8 +12,8 @@ class costs(base):
 
     def __init__(self, arn: str, region:str, service:str, environment:str) -> None:
         super().__init__(arn, region)
-        self.service = service
-        self.environment = environment
+        self.service = self.safe_string(service)
+        self.environment = self.safe_string(environment)
         return
 
 
@@ -47,10 +47,10 @@ class costs(base):
                         # generate package for sending in form that it likes
                         results.append({
                             'metric': {
-                                'Project': self.service.replace(" ", "_"),
+                                'Project': self.service,
                                 'Category': 'costs',
                                 'SubCategory': 'aws',
-                                'environment': self.environment.replace(" ", "_"),
+                                'Environment': self.environment,
                                 # int - str wrapper is to get a millisecond timestamp, but push it as a string
                                 'Time': str(int(date.timestamp() * 1000)),
                                 'MeasureName': self.service_name_correction(row['Keys'][0]),

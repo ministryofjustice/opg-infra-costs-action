@@ -41,10 +41,17 @@ class base:
             aws_session_token = self.session['Credentials']['SessionToken']
         )
 
+
+    def safe_string(self, v:str) -> str:
+        """
+        Remove / Replace disallowed characters
+        """
+        return v.replace(" ", "_").replace("(", "").replace(")", "")
+
     def service_name_correction(self, name:str) -> str:
         """
         Handle name changes over time to allow for mapping of costs
         """
         if name == 'Amazon EC2 Container Service':
             name = "Amazon Elastic Container Service"
-        return name.replace(" ", "_")
+        return self.safe_string(name)
