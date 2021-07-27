@@ -26,7 +26,6 @@ def send(args: Namespace, results:list):
     length = len(results)
     chunked = list(chunks(results, 20))
     headers = {'x-api-key': args.key, 'Content-Type': 'application/json; charset=utf-8'}
-    pp.pprint(headers)
 
     print(f"[{args.service}] Sending total of [{length}] metrics in [{len(chunked)}] chunks")
     for i in range(len(chunked)):
@@ -47,10 +46,10 @@ def costdata(io: handler, args: Namespace):
     start = args.start_date
     end = args.end_date
 
-    print(f"[{args.service}] Getting costs between [{start} - {end}] using [{args.arn}]")
+    print(f"[{args.service}-{args.environment}] Getting costs between [{start} - {end}] using [{args.arn}]")
     awscosts = costs(args.arn, args.region, args.service, args.environment)
     results = awscosts.auth().get(start, end)
-    # send data to metrics api
+    #send data to metrics api
     send(args, results)
 
 def main():
