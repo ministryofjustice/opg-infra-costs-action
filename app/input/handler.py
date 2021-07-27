@@ -23,12 +23,15 @@ class handler:
 
         self.arg_parser = argparse.ArgumentParser(description=self.arg_parser_description)
 
+        api_group = self.arg_parser.add_argument_group("API gateway configuration")
+        api_group.add_argument('--key', help='API key for access', required=True)
+        api_group.add_argument('--uri', help='APIs FQDN to put data to', required=True)
 
         aws_group = self.arg_parser.add_argument_group("AWS configuration")
         aws_group.add_argument('--arn', help='AWS ARN to assume', required=True)
         aws_group.add_argument('--region', help='AWS region to operate within', default='eu-west-1')
 
-        ce_group = self.arg_parser.add_argument_group("AWS Cost Explorer configuration")
+        ce_group = self.arg_parser.add_argument_group("AWS Cost Explorer options")
         ce_group.add_argument('--start-date',
                             type=datetime.date.fromisoformat,
                             default=start,
@@ -42,7 +45,7 @@ class handler:
 
         service_group = self.arg_parser.add_argument_group("Service details")
         service_group.add_argument('--service', help='Service name to be known as (eg use-an-lpa)', required=True)
-        service_group.add_argument('--environment', help='Environment this service represents', default='development', choices=['development', 'pre-production', 'production'])
+        service_group.add_argument('--environment', help='Environment for this service', default='development', choices=['development', 'pre-production', 'production'])
 
 
 
