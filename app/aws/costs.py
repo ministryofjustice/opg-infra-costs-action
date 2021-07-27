@@ -43,16 +43,19 @@ class costs(base):
                 # if we have cost data, loop over it
                 if 'Groups' in item:
                     for row in item['Groups']:
-                        # generate package for sending
+                        # generate package for sending in form that it likes
                         results.append({
-                            'Project': self.service,
-                            'Category': 'costs',
-                            'SubCategory': 'aws',
-                            'environment': self.environment,
-                            'Time': str(int(date.timestamp() * 1000)),
-                            'MeasureName': self.service_name_correction(row['Keys'][0]),
-                            'MeasureValue': row['Metrics']['UnblendedCost']['Amount'],
-                            "MeasureValueType": "DOUBLE"
+                            'metric': {
+                                'Project': self.service,
+                                'Category': 'costs',
+                                'SubCategory': 'aws',
+                                'environment': self.environment,
+                                # int - str wrapper is to get a millisecond timestamp, but push it as a string
+                                'Time': str(int(date.timestamp() * 1000)),
+                                'MeasureName': self.service_name_correction(row['Keys'][0]),
+                                'MeasureValue': row['Metrics']['UnblendedCost']['Amount'],
+                                "MeasureValueType": "DOUBLE"
+                            }
                         })
 
             return results
