@@ -1,23 +1,41 @@
 #!/usr/bin/env python
 from argparse import Namespace
 import pprint
+import json
 import locale
 import dateutil.relativedelta
 import datetime
-
+import requests
 
 from input.handler import handler
 from aws.costs import costs
 
 pp = pprint.PrettyPrinter(indent=4)
 
+def chunks(lst, n):
+    """Yield successive n-sized chunks from list (lst)."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
 
-def currency(value):
-    """
-    template helper to return currency value
-    """
-    return locale.currency(value, symbol=False, grouping=True)
 
+def send(args: Namespace, results:list):
+    """
+    Sends all results from cost explorer to the metrics service
+    configured within the args (via key & uri)
+    """
+    length = len(results)
+    chunked = list(chunks(results, 20))
+    headers = {'x-api-key': args.key, 'Content-Type': 'application/json; charset=utf-8'}
+    pp.pprint(headers)
+
+    print(f"[{args.service}] Sending total of [{length}] metrics in [{len(chunked)}] chunks")
+    for i in range(len(chunked)):
+        data = chunked[i]
+        print(f"[{args.service}] Sending chunk [{i}] with [{len(data)}] entries")
+        body = {'metrics': data}
+        response = requests.put(args.uri, json=body, headers=headers)
+        if response.status_code != 200:
+            raise Exception('MetricsResponse', f"Recieved error from API: {response.status_code}")
 
 
 def costdata(io: handler, args: Namespace):
@@ -28,16 +46,17 @@ def costdata(io: handler, args: Namespace):
     """
     start = args.start_date
     end = args.end_date
-    print(f"[{args.arn}] Getting costs between [{start} - {end}]")
+
+    print(f"[{args.service}] Getting costs between [{start} - {end}] using [{args.arn}]")
     awscosts = costs(args.arn, args.region, args.service, args.environment)
     results = awscosts.auth().get(start, end)
-    pp.pprint(len(results))
-
-    pp.pprint(results[:10])
-
-
+    # send data to metrics api
+    send(args, results)
 
 def main():
+    """
+    Main execution function
+    """
     io = handler()
     args = io.parser().parse().args
 
