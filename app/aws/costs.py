@@ -47,10 +47,10 @@ class costs(base):
                         # generate package for sending in form that it likes
                         results.append({
                             'metric': {
-                                'Project': self.service,
+                                'Project': self.service.replace(" ", "_"),
                                 'Category': 'costs',
                                 'SubCategory': 'aws',
-                                'environment': self.environment,
+                                'environment': self.environment.replace(" ", "_"),
                                 # int - str wrapper is to get a millisecond timestamp, but push it as a string
                                 'Time': str(int(date.timestamp() * 1000)),
                                 'MeasureName': self.service_name_correction(row['Keys'][0]),
