@@ -17,7 +17,7 @@ class costs(base):
         return
 
 
-    def usage(self, client, start:datetime, end:datetime) -> Union[list, None]:
+    def usage(self, client, start:datetime, end:datetime) -> list:
         """
         Get costs of the used resources during this time period
         in a list of dicts
@@ -43,6 +43,7 @@ class costs(base):
                 # if we have cost data, loop over it
                 if 'Groups' in item:
                     for row in item['Groups']:
+                        value = float(row['Metrics']['UnblendedCost']['Amount'])
                         # generate package for sending in form that it likes
                         results.append({
                             'metric': {
@@ -53,17 +54,14 @@ class costs(base):
                                 # int - str wrapper is to get a millisecond timestamp, but push it as a string
                                 'Time': str(int(date.timestamp() * 1000)),
                                 'MeasureName': self.service_name_correction(row['Keys'][0]),
-                                'MeasureValue': row['Metrics']['UnblendedCost']['Amount'],
+                                'MeasureValue': "{:.3f}".format(value),
                                 "MeasureValueType": "DOUBLE"
                             }
                         })
-
-            return results
-
-        return None
+        return results
 
 
-    def get(self, start: datetime, end: datetime) -> dict:
+    def get(self, start: datetime, end: datetime) -> list:
         """
         Get used costs for the time period passed
         in for the already set arn & service
