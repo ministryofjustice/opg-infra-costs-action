@@ -31,11 +31,11 @@ def send(args: Namespace, results:list):
     print(f"[{args.service}] Sending total of [{length}] metrics in [{len(chunked)}] chunks")
     for i in range(len(chunked)):
         data = chunked[i]
-        print(f"[{args.service}] Sending chunk [{i}] with [{len(data)}] entries")
+        print(f"[{args.service}] Sending chunk [{i+1}] with [{len(data)}] entries")
         body = {'metrics': data}
         response = requests.put(args.uri, json=body, headers=headers)
         if response.status_code != 200:
-            raise Exception('MetricsResponse', f"Recieved error from API: {response.status_code}")
+            raise Exception('APIResponse', f"Recieved error from API: {response.status_code} = {str(response.json())}")
 
 
 def costdata(io: handler, args: Namespace):
