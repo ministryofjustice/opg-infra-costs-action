@@ -1,32 +1,27 @@
 name: 'OPG Infrastructure Costing'
-description: 'Generate high level costing report for AWS accounts'
+description: 'Send cost data for this service to metrics api'
 inputs:
   arn:
     required: true
     description: 'The AWS ARN string to fetch cost data for'
-  label:
-    required: true
-    description: 'A label to attach to the cost data for grouping'
   region:
     default: 'eu-west-1'
     description: 'AWS region'
-  months:
-    default: 6
-    description: Number of months to include in the report
-  report:
-    default: false
-    description: 'If set to true, generate a single combined markdown files out of the raw data files stored in $directory'
-  directory:
+  service:
     required: true
-    default: ${{ github.workspace }}
-
+    description: 'Name of the service'
+  key:
+    required: true
+    description: 'The authentication key set as a header for all requests'
+  uri:
+    required: true
+    description: 'The FQDN of the api sending this data to'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - "--arn=${{ inputs.arn }}"
-    - "--label=${{ inputs.label }}"
-    - "--default=${{ inputs.default }}"
-    - "--months=${{ inputs.months }}"
-    - "--generate-report=${{ inputs.report }}"
-    - "--prefix=${{ github.run_id }}-${{ github.run_number }}"
+    - "--service=${{ inputs.service }}"
+    - "--region=${{ inputs.region }}"
+    - "--key=${{ inputs.key }}"
+    - "--uri=${{ inputs.uri }}"
