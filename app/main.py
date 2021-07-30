@@ -18,13 +18,13 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 
-def send(args: Namespace, results:list):
+def send(args: Namespace, results:list, chunksize:int = 20):
     """
     Sends all results from cost explorer to the metrics service
     configured within the args (via key & uri)
     """
     length = len(results)
-    chunked = list(chunks(results, 20))
+    chunked = list(chunks(results, chunksize))
     headers = {'x-api-key': args.key, 'Content-Type': 'application/json; charset=utf-8'}
 
     print(f"[{args.service}] Sending total of [{length}] metrics in [{len(chunked)}] chunks")
