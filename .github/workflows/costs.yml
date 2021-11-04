@@ -20,7 +20,7 @@ jobs:
       - run: |
           echo "Label: ${{ matrix.label }}"
           echo "Environment: ${{ matrix.environment }}"
-          echo "Account: ${{ matrix.arn }}"
+          echo "Arn: ${{ matrix.arn }}"
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

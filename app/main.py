@@ -13,7 +13,9 @@ from aws.costs import costs
 pp = pprint.PrettyPrinter(indent=4)
 
 def chunks(lst, n):
-    """Yield successive n-sized chunks from list (lst)."""
+    """
+    Yield successive n-sized chunks from list (lst).
+    """
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
@@ -27,14 +29,15 @@ def send(args: Namespace, results:list, chunksize:int = 20):
     chunked = list(chunks(results, chunksize))
     headers = {'x-api-key': args.key, 'Content-Type': 'application/json; charset=utf-8'}
 
-    print(f"[{args.service}] Sending total of [{length}] metrics in [{len(chunked)}] chunks")
+    print(f"[{args.service}-{args.environment}] Sending total of [{length}] metrics in [{len(chunked)}] chunks")
     for i in range(len(chunked)):
         data = chunked[i]
-        print(f"[{args.service}] Sending chunk [{i+1}] with [{len(data)}] entries")
+        print(f"[{args.service}-{args.environment}] Sending chunk [{i+1}] with [{len(data)}] entries")
         body = {'metrics': data}
-        response = requests.put(args.uri, json=body, headers=headers)
-        if response.status_code != 200:
-            raise Exception('APIResponse', f"Recieved error from API: {response.status_code} = {str(response.json())}")
+        pprint.pprint(data)
+        # response = requests.put(args.uri, json=body, headers=headers)
+        # if response.status_code != 200:
+        #     raise Exception('APIResponse', f"Recieved error from API: {response.status_code} = {str(response.json())}")
 
 
 def costdata(io: handler, args: Namespace):

@@ -9,19 +9,23 @@ inputs:
     description: 'AWS region'
   service:
     required: true
-    description: 'Name of the service'
+    description: 'Name of the service (such as use-an-lpa)'
+  environment:
+    required: true
+    description: 'Name of the environment (such as production or the branch name)'
   key:
     required: true
     description: 'The authentication key set as a header for all requests'
   uri:
     required: true
-    description: 'The FQDN of the api sending this data to'
+    description: 'The URI of the api sending this data to'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - "--arn=${{ inputs.arn }}"
-    - "--service=${{ inputs.service }}"
-    - "--region=${{ inputs.region }}"
     - "--key=${{ inputs.key }}"
     - "--uri=${{ inputs.uri }}"
+    - "--arn=${{ inputs.arn }}"
+    - "--region=${{ inputs.region }}"
+    - "--service=${{ inputs.service }}"
+    - "--environment=${{ inputs.environment }}"
