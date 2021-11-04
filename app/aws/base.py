@@ -5,6 +5,7 @@ class base:
     arn: str
     region:str
     session: None
+    duration:int = 900
 
     def __init__(self, arn: str, region:str) -> None:
         """
@@ -26,7 +27,7 @@ class base:
         self.session = sts.assume_role(
             RoleArn=self.arn,
             RoleSessionName='cost_data_sts_session',
-            DurationSeconds=900)
+            DurationSeconds=self.duration)
         return self
 
     def client(self, type: str):
@@ -54,4 +55,7 @@ class base:
         """
         if name == 'Amazon EC2 Container Service':
             name = "Amazon Elastic Container Service"
+        elif name == 'Amazon Elasticsearch Service':
+            name = 'Amazon OpenSearch Service'
+
         return self.safe_string(name)
