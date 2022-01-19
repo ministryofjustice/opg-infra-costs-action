@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  costs_to_metrics:
+    image: costs_to_metrics
+    build:
+      context: ./lambda
+      dockerfile: Dockerfile
+    ports:
+      - 9000:8080
