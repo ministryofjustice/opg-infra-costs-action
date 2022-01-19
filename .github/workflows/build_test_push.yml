@@ -19,49 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - uses: actions/setup-node@v2
-
-      # - name: Get yarn cache directory path
-      #   id: yarn-cache-dir-path
-      #   run: echo "::set-output name=dir::$(yarn cache dir)"
-      # - name: Dependencies from Cache
-      #   uses: actions/cache@v2
-      #   id: yarn-cache
-      #   with:
-      #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-yarn-
-      # - name: Run Unit Tests & Generate Coverage Report
-      #   run: |
-      #     mkdir -p /home/runner/project/build/service-pdf
-      #     make unit-test-coverage
-      # - name: Publish Unit Test Results
-      #   uses: EnricoMi/publish-unit-test-result-action@v1
-      #   if: always()
-      #   with:
-      #     check_name: "Unit Test Results"
-      #     files: test-results/junit/results.xml
-
-      # - name: Coverage Report
-      #   uses: lucassabreu/comment-coverage-clover@main
-      #   with:
-      #     file: "coverage/clover.xml"
-      #     min-line-coverage: 89
-      #     min-method-coverage: 100
-
-      # - name: Upload Junit
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: junit
-      #     path: |
-      #       test-results/junit
-      # - name: Upload Coverage
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: coverage
-      #     path: |
-      #       /home/runner/project/build/service-pdf
   build:
     name: "Build & Push Containers"
     runs-on: ubuntu-latest
