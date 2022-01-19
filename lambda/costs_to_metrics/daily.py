@@ -9,6 +9,9 @@ from send.send import send
 pp = pprint.PrettyPrinter(indent=4).pprint
 
 
+def handler(event, context):
+    daily_costs()
+
 
 def daily_costs():
     """
@@ -26,14 +29,13 @@ def daily_costs():
 
     send(results)
 
+
 def main():
     """
     Main execution function
     """
 
     daily_costs()
-
-
 
 
 if __name__ == "__main__":
