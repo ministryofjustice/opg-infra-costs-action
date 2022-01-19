@@ -1,5 +1,5 @@
-FROM public.ecr.aws/lambda/python:3.8
+FROM public.ecr.aws/lambda/python:3.9
 
 WORKDIR /var/task
-COPY lambda/clsf-to-sqs/src/main.py ./
-CMD ["main.handler"]
+COPY ./costs ./
+CMD ["daily.handler"]
