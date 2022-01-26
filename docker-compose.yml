@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  costs_to_metrics:
-    image: costs_to_metrics
+  costs-to-metrics:
+    image: costs-to-metrics
     build:
       context: ./lambda
       dockerfile: Dockerfile

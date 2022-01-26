@@ -1,5 +1,5 @@
 FROM public.ecr.aws/lambda/python:3.9
 
 WORKDIR /var/task
-COPY ./costs_to_metrics ./
+COPY ./costs-to-metrics ./
 CMD ["daily.handler"]

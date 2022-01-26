@@ -45,7 +45,7 @@ jobs:
       - name: Trivy Image Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: costs_to_metrics:latest
+          image-ref: costs-to-metrics:latest
           severity: 'HIGH,CRITICAL'
           format: 'template'
           template: '@/contrib/sarif.tpl'
@@ -68,33 +68,33 @@ jobs:
           RELEASE_BRANCHES: main
           WITH_V: true
 
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      #     aws-region: eu-west-1
-      #     role-to-assume: arn:aws:iam::311462405659:role/costs-to-metrics-ci
-      #     role-duration-seconds: 3600
-      #     role-session-name: GitHubActions
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::311462405659:role/costs-to-metrics-ci
+          role-duration-seconds: 3600
+          role-session-name: CostsToMetricsGithubAction
 
-      # - name: ECR Login
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
-      #   with:
-      #     registries: 311462405659
+      - name: ECR Login
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registries: 311462405659
 
-      # - name: Push Container
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     COSTS_ECR_REPOSITORY: costs_to_metrics
-      #   run: |
-      #     docker tag costs_to_metrics:latest $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:${{ steps.bump_version.outputs.tag }}
-      #     docker tag costs_to_metrics:latest $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:latest
-      #     if [ $BRANCH_NAME == "main" ]; then
-      #       docker tag costs_to_metrics:latest $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:main-${{ steps.bump_version.outputs.tag }}
-      #       # We want all of the tags pushed
-      #       docker push --all-tags $ECR_REGISTRY/$COSTS_ECR_REPOSITORY
-      #     else
-      #       docker push $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:${{ steps.bump_version.outputs.tag }}
-      #     fi
+      - name: Push Container
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          COSTS_ECR_REPOSITORY: costs-to-metrics
+        run: |
+          docker tag costs-to-metrics:latest $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:${{ steps.bump_version.outputs.tag }}
+          docker tag costs-to-metrics:latest $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:latest
+          if [ $BRANCH_NAME == "main" ]; then
+            docker tag costs-to-metrics:latest $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:main-${{ steps.bump_version.outputs.tag }}
+            # We want all of the tags pushed
+            docker push --all-tags $ECR_REGISTRY/$COSTS_ECR_REPOSITORY
+          else
+            docker push $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:${{ steps.bump_version.outputs.tag }}
+          fi
