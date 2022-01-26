@@ -76,7 +76,7 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: arn:aws:iam::311462405659:role/costs-to-metrics-ci
           role-duration-seconds: 3600
-          role-session-name: GitHubActions
+          role-session-name: CostsToMetricsGithubAction
 
       - name: ECR Login
         id: login-ecr
