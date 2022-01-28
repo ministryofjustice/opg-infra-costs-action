@@ -70,3 +70,14 @@ typings/
 
 **.costs.json
 cost_report.html.md.erb
+
+.DS_Store
+**/.terraform/
+**/terraform.tfstate.d/
+.vscode/
+**__pycache__
+**/cluster_config.json
+
+.python-version
+.pytest_cache
+.coverage
