@@ -5,7 +5,7 @@ locals {
     owner         = "OPG WebOps: opgteam@digital.justice.gov.uk"
   }
   optional_tags = {
-    source-code = "https://github.com/ministryofjustice/opg-org-infra"
+    source-code = "https://github.com/ministryofjustice/opg-infra-costs-action"
   }
 }
 
