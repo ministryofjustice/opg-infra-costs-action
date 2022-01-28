@@ -98,3 +98,23 @@ jobs:
           else
             docker push $ECR_REGISTRY/$COSTS_ECR_REPOSITORY:${{ steps.bump_version.outputs.tag }}
           fi
+
+      - name: Lint Terraform
+        id: tf_lint
+        run: terraform fmt -check -recursive
+        working-directory: ./terraform/shared
+
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: ./terraform/shared
+
+      - name: Terraform Plan
+        run: |
+          terraform init -input=false
+          terraform plan -lock-timeout=300s -input=false -parallelism=30
+        working-directory: ./terraform/shared
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        run: terraform apply -lock-timeout=300s -input=false -auto-approve -parallelism=30
+        working-directory: ./terraform/shared
