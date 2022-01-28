@@ -28,6 +28,12 @@ variable "environment_variables" {
   default     = {}
 }
 
+variable "lambda_function_tags" {
+  description = "A map that defines tags for the Lambda Function."
+  type        = map(string)
+  default     = {}
+}
+
 variable "image_uri" {
   description = "The URI for the container image to use"
   type        = string

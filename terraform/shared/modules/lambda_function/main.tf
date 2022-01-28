@@ -4,6 +4,7 @@ resource "aws_lambda_function" "lambda_function" {
   package_type  = var.package_type
   role          = aws_iam_role.lambda_role.arn
   timeout       = var.timeout
+  tags          = var.lambda_function_tags
 
   image_config {
     entry_point       = var.entry_point

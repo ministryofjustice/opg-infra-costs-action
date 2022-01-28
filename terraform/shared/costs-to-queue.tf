@@ -22,6 +22,7 @@ module "costs_to_sqs" {
   lambda_role_policy_document         = data.aws_iam_policy_document.costs_to_sqs_lambda_function_policy.json
   aws_cloudwatch_log_group_kms_key_id = aws_kms_key.cloudwatch.arn
   providers                           = { aws = aws.management }
+  lambda_function_tags                = { "image-tag" = var.costs_to_sqs_lambda_container_version }
 }
 
 
