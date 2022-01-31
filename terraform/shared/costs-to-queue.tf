@@ -35,5 +35,15 @@ data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
     ]
     resources = ["*"]
   }
+  statement {
+    sid       = "AllowSQSAccess"
+    effect    = "Allow"
+    resources = [aws_sqs_queue.ship_to_opg_metrics.arn]
+    actions = [
+      "sqs:SendMessage",
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+    ]
+  }
   provider = aws.management
 }
