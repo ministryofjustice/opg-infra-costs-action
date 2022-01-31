@@ -1,5 +1,5 @@
 import pprint
-from aws.sqs import send_message
+from aws.sqs import sqs_send_message
 
 pp = pprint.PrettyPrinter(indent=4).pprint
 
@@ -27,4 +27,4 @@ def send(results: list, chunksize: int = 20):
         print(f"Chunk {i}")
         data = chunked[i]
         body = {'metrics': data}
-        send_message(body)
+        sqs_send_message(body)
