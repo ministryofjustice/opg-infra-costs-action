@@ -6,11 +6,13 @@ resource "aws_sqs_queue" "ship_to_opg_metrics" {
   receive_wait_time_seconds         = 10
   kms_master_key_id                 = aws_kms_key.ship_to_metrics_queue.id
   kms_data_key_reuse_period_seconds = 300
+  provider                          = aws.management
 }
 
 resource "aws_sqs_queue_policy" "ship_to_opg_metrics" {
   queue_url = aws_sqs_queue.ship_to_opg_metrics.id
   policy    = data.aws_iam_policy_document.ship_to_opg_metrics_queue_policy.json
+  provider  = aws.management
 }
 
 data "aws_iam_policy_document" "ship_to_opg_metrics_queue_policy" {
@@ -31,11 +33,7 @@ data "aws_iam_policy_document" "ship_to_opg_metrics_queue_policy" {
       identifiers = [data.aws_caller_identity.current.account_id]
     }
   }
-}
-
-resource "aws_lambda_event_source_mapping" "ship_to_opg_metrics" {
-  event_source_arn = aws_sqs_queue.ship_to_opg_metrics.arn
-  function_name    = module.costs_to_sqs.lambda_function.arn
+  provider = aws.management
 }
 
 resource "aws_kms_key" "ship_to_metrics_queue" {
@@ -43,11 +41,13 @@ resource "aws_kms_key" "ship_to_metrics_queue" {
   deletion_window_in_days = 10
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.ship_to_metrics_queue_kms.json
+  provider                = aws.management
 }
 
 resource "aws_kms_alias" "ship_to_metrics_queue_alias" {
   name          = "alias/ship_to_metrics_queue_encryption"
   target_key_id = aws_kms_key.ship_to_metrics_queue.key_id
+  provider      = aws.management
 }
 
 # See the following link for further information
@@ -63,26 +63,6 @@ data "aws_iam_policy_document" "ship_to_metrics_queue_kms" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
-      ]
-    }
-  }
-
-  statement {
-    sid       = "Allow Key to be used for Encryption"
-    effect    = "Allow"
-    resources = ["*"]
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-    ]
-
-    principals {
-      type = "Service"
-      identifiers = [
-        "*"
       ]
     }
   }
@@ -113,4 +93,5 @@ data "aws_iam_policy_document" "ship_to_metrics_queue_kms" {
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass"]
     }
   }
+  provider = aws.management
 }
