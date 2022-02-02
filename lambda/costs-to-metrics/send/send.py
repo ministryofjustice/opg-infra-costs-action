@@ -12,7 +12,7 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 
-def send(results: list, chunksize: int = 20):
+def send(results: list, chunksize: int = 1):
     """
     Sends all results from cost explorer to the metrics service
     configured within the args (via key & uri)
