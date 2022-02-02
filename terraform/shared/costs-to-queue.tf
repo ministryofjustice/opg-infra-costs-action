@@ -15,7 +15,8 @@ module "costs_to_sqs" {
   description       = "Function to take Cloudwatch Logs Subscription Filters and send them to SQS"
   working_directory = "/var/task"
   environment_variables = {
-    "QUEUE_URL" : aws_sqs_queue.ship_to_opg_metrics.url
+    "QUEUE_URL" : aws_sqs_queue.ship_to_opg_metrics.url,
+    "CHUNK_SIZE" : 20,
   }
   image_uri                           = "${data.aws_ecr_repository.costs_to_sqs.repository_url}@${data.aws_ecr_image.costs_to_sqs.image_digest}"
   ecr_arn                             = data.aws_ecr_repository.costs_to_sqs.arn
