@@ -48,4 +48,16 @@ data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
       "sqs:DeleteMessage",
     ]
   }
+  statement {
+    sid       = "AllowXRayAccess"
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
+    ]
+  }
 }
