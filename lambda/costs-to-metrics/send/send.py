@@ -18,7 +18,7 @@ def send(results: list):
     Sends all results from cost explorer to the metrics service
     configured within the args (via key & uri)
     """
-    chunksize: int = os.getenv('CHUNK_SIZE', 20)
+    chunksize: = os.getenv(int('CHUNK_SIZE'), 20)
     length = len(results)
     chunked = list(chunks(results, chunksize))
     headers = {'x-api-key': 'XXX',
