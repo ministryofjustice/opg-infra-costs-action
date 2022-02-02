@@ -1,4 +1,3 @@
-import os
 import pprint
 from aws.sqs import sqs_send_message
 
@@ -13,12 +12,11 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 
-def send(results: list):
+def send(results: list, chunksize: int = 1):
     """
     Sends all results from cost explorer to the metrics service
     configured within the args (via key & uri)
     """
-    chunksize = os.getenv(int('CHUNK_SIZE'), 20)
     length = len(results)
     chunked = list(chunks(results, chunksize))
     headers = {'x-api-key': 'XXX',
