@@ -1,13 +1,3 @@
-resource "aws_cloudwatch_log_group" "costs_to_metrics" {
-  provider          = aws.management
-  name              = "costs-to-metrics"
-  retention_in_days = 14
-  kms_key_id        = aws_kms_key.cloudwatch.arn
-  tags = {
-    "Name" = "costs-to-metrics"
-  }
-}
-
 resource "aws_kms_key" "cloudwatch" {
   provider                = aws.management
   description             = "Cloudwatch encryption Costs to Metrics"
