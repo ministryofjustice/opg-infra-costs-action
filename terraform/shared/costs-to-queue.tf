@@ -21,6 +21,7 @@ module "costs_to_sqs" {
   ecr_arn                             = data.aws_ecr_repository.costs_to_sqs.arn
   lambda_role_policy_document         = data.aws_iam_policy_document.costs_to_sqs_lambda_function_policy.json
   aws_cloudwatch_log_group_kms_key_id = aws_kms_key.cloudwatch.arn
+  timeout                             = 20
   providers                           = { aws = aws.management }
   lambda_function_tags                = { "image-tag" = var.costs_to_sqs_lambda_container_version }
 }
@@ -35,6 +36,7 @@ data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
     ]
     resources = ["*"]
   }
+  provider = aws.management
   statement {
     sid       = "AllowSQSAccess"
     effect    = "Allow"
@@ -45,5 +47,4 @@ data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
       "sqs:DeleteMessage",
     ]
   }
-  provider = aws.management
 }

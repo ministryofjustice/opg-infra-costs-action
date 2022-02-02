@@ -66,6 +66,23 @@ data "aws_iam_policy_document" "ship_to_metrics_queue_kms" {
       ]
     }
   }
+  statement {
+    sid       = "Allow Key to be used for Decryption"
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        module.costs_to_sqs.lambda_iam_role.arn,
+      ]
+    }
+  }
 
   statement {
     sid       = "Key Administrator"
