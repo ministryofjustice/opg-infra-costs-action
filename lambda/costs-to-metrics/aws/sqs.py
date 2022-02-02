@@ -1,9 +1,10 @@
 import os
 import boto3
-import pprint
+import logging
 
 
-pp = pprint.PrettyPrinter(indent=4).pprint
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def sqs_send_message(message: str):
@@ -13,4 +14,4 @@ def sqs_send_message(message: str):
         QueueUrl=queue_url,
         MessageBody=str(message),
     )
-    pp(response)
+    logger.info(response)
