@@ -3,6 +3,10 @@ import boto3
 import logging
 
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+
 def sqs_send_message(message: str):
     queue_url = os.getenv('QUEUE_URL')
     client = boto3.client('sqs')
@@ -10,4 +14,4 @@ def sqs_send_message(message: str):
         QueueUrl=queue_url,
         MessageBody=str(message),
     )
-    logging.info(response)
+    logger.info(response)
