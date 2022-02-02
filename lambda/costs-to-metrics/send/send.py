@@ -25,7 +25,7 @@ def send(results: list, chunksize: int = 1):
                'Content-Type': 'application/json; charset=utf-8'}
 
     logger.info(
-        f"Sending total of [{length}] metrics in [{len(chunked)}] chunks")
+        "Sending total of %s metrics in %s chunks", length, len(chunked))
     for i in range(len(chunked)):
         logger.info(f"Chunk {i}")
         data = chunked[i]
