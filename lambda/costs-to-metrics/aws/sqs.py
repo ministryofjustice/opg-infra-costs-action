@@ -11,6 +11,6 @@ def sqs_send_message(message: str):
     client = boto3.client('sqs')
     response = client.send_message(
         QueueUrl=queue_url,
-        MessageBody=message,
+        MessageBody=str(message),
     )
     pp(response)
