@@ -25,7 +25,7 @@ def daily_costs():
     end = now.replace(hour=0, minute=0, second=0)
     start = end - dateutil.relativedelta.relativedelta(days=1)
 
-    logger.info('Getting cost data between % and %', start, end)
+    logger.info("Getting cost data between %s and %s", start, end)
 
     aws_costs = costs()
     results = aws_costs.get(start, end)
