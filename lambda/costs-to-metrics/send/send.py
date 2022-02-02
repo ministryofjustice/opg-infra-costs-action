@@ -1,7 +1,5 @@
-import pprint
+import logging
 from aws.sqs import sqs_send_message
-
-pp = pprint.PrettyPrinter(indent=4).pprint
 
 
 def chunks(lst, n):
@@ -22,9 +20,10 @@ def send(results: list, chunksize: int = 1):
     headers = {'x-api-key': 'XXX',
                'Content-Type': 'application/json; charset=utf-8'}
 
-    print(f"Sending total of [{length}] metrics in [{len(chunked)}] chunks")
+    logging.info(
+        f"Sending total of [{length}] metrics in [{len(chunked)}] chunks")
     for i in range(len(chunked)):
-        print(f"Chunk {i}")
+        logging.info(f"Chunk {i}")
         data = chunked[i]
         body = {'metrics': data}
         sqs_send_message(body)
