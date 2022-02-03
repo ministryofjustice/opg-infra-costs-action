@@ -1,17 +1,17 @@
 import datetime
-from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import boto3
 
 
-class costs():
+class Costs():
     data: dict
 
-    def safe_string(self, v: str) -> str:
+    @staticmethod
+    def safe_string(value: str) -> str:
         """
         Remove / Replace disallowed characters
         """
-        return v.replace(" ", "_").replace("(", "").replace(")", "")
+        return value.replace(" ", "_").replace("(", "").replace(")", "")
 
     def service_name_correction(self, name: str) -> str:
         """
@@ -66,7 +66,8 @@ class costs():
                                 'Project': self.service_name_correction(row['Keys'][1]),
                                 'Category': 'costs',
                                 'SubCategory': granularity.lower(),
-                                # int - str wrapper is to get a millisecond timestamp, but push it as a string
+                                # int - str wrapper is to get a millisecond timestamp,
+                                # but push it as a string
                                 'Time': str(int(date.timestamp() * 1000)),
                                 'MeasureName': self.service_name_correction(row['Keys'][0]),
                                 'MeasureValue': "{:.3f}".format(value),

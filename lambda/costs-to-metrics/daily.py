@@ -4,7 +4,7 @@ from datetime import timezone
 import logging
 import dateutil.relativedelta
 from aws_xray_sdk.core import patch_all
-from aws.costs import costs
+from aws.costs import Costs
 from send.send import send
 
 
@@ -27,7 +27,7 @@ def daily_costs():
 
     logger.info("Getting cost data between %s and %s", start, end)
 
-    aws_costs = costs()
+    aws_costs = Costs()
     results = aws_costs.get(start, end)
     logger.info(results)
 
