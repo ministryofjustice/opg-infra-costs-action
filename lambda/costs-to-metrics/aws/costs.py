@@ -70,7 +70,7 @@ class Costs():
                                 # but push it as a string
                                 'Time': str(int(date.timestamp() * 1000)),
                                 'MeasureName': self.service_name_correction(row['Keys'][0]),
-                                'MeasureValue': "{:.3f}".format(value),
+                                'MeasureValue': f"{value:.3f}",
                                 "MeasureValueType": "DOUBLE"
                             }
                         })
