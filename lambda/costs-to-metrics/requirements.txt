@@ -3,3 +3,4 @@ pprintpp
 datetime
 python-dateutil
 jinja2
+aws-xray-sdk==2.4.3

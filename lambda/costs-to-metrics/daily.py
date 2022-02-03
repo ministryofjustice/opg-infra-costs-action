@@ -1,13 +1,16 @@
 #!/usr/bin/env python
-import pprint
-import dateutil.relativedelta
 import datetime
 from datetime import timezone
-from aws.costs import costs
+import logging
+import dateutil.relativedelta
+from aws_xray_sdk.core import patch_all
+from aws.costs import Costs
 from send.send import send
 
 
-pp = pprint.PrettyPrinter(indent=4).pprint
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+patch_all()
 
 
 def handler(event, context):
@@ -22,11 +25,11 @@ def daily_costs():
     end = now.replace(hour=0, minute=0, second=0)
     start = end - dateutil.relativedelta.relativedelta(days=1)
 
-    print(f"Getting cost data between [{start}] [{end}]")
+    logger.info("Getting cost data between %s and %s", start, end)
 
-    aws_costs = costs()
+    aws_costs = Costs()
     results = aws_costs.get(start, end)
-    pp(results)
+    logger.info(results)
 
     send(results)
 
