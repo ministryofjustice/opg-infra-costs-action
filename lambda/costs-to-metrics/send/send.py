@@ -6,12 +6,15 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def chunks(lst, n):
+def chunks(lst, number):
     """
     Yield successive n-sized chunks from list (lst).
     """
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+    for i in enumerate(lst):
+        yield lst[i:i + number]
+
+    # for i in range(0, len(lst), number):
+    #     yield lst[i:i + number]
 
 
 def send(results: list, chunksize: int = 1):
