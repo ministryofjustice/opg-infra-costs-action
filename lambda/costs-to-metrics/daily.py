@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-import dateutil.relativedelta
 import datetime
 from datetime import timezone
+import logging
+import dateutil.relativedelta
+from aws_xray_sdk.core import patch_all
 from aws.costs import costs
 from send.send import send
-import logging
-from aws_xray_sdk.core import patch_all
 
 
 logger = logging.getLogger()
