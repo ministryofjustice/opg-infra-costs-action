@@ -12,17 +12,17 @@ data "aws_ecr_image" "ship_to_opg_metrics" {
 data "aws_secretsmanager_secret_version" "opg_metrics_api_key" {
   secret_id     = data.aws_secretsmanager_secret.opg_metrics_api_key.id
   version_stage = "AWSCURRENT"
-  provider      = aws.shared
+  provider      = aws.shared_development
 }
 
 data "aws_secretsmanager_secret" "opg_metrics_api_key" {
   name     = "opg-metrics-api-key/costs-to-metrics-development"
-  provider = aws.shared
+  provider = aws.shared_development
 }
 
 data "aws_kms_alias" "opg_metrics_api_key_encryption" {
   name     = "alias/opg_metrics_api_key_encryption"
-  provider = aws.shared
+  provider = aws.shared_development
 }
 
 module "ship_to_opg_metrics" {
@@ -81,4 +81,5 @@ resource "aws_lambda_event_source_mapping" "ship_to_opg_metrics" {
   count            = var.enable_ship_to_metrics ? 1 : 0
   event_source_arn = aws_sqs_queue.ship_to_opg_metrics.arn
   function_name    = module.ship_to_opg_metrics.lambda_function.arn
+  provider         = aws.management
 }
