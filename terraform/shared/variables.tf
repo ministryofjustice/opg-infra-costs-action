@@ -13,3 +13,13 @@ variable "costs_to_sqs_lambda_container_version" {
   type    = string
   default = "latest"
 }
+
+variable "ship_to_queue_lambda_container_version" {
+  type    = string
+  default = "latest"
+}
+
+variable "enable_ship_to_metrics" {
+  type    = bool
+  default = false
+}

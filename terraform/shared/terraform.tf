@@ -28,6 +28,7 @@ variable "DEFAULT_ROLE" {
 
 locals {
   management = "311462405659"
+  shared     = "679638075911"
 }
 
 provider "aws" {
@@ -38,6 +39,18 @@ provider "aws" {
   }
   assume_role {
     role_arn     = "arn:aws:iam::${local.management}:role/${var.DEFAULT_ROLE}"
+    session_name = "terraform-session"
+  }
+}
+
+provider "aws" {
+  region = "eu-west-1"
+  alias  = "shared"
+  default_tags {
+    tags = merge(local.mandatory_tags, local.optional_tags)
+  }
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.shared}:role/${var.DEFAULT_ROLE}"
     session_name = "terraform-session"
   }
 }
