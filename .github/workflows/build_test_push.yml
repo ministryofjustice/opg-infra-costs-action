@@ -128,7 +128,7 @@ jobs:
           role-to-assume: arn:aws:iam::311462405659:role/costs-to-metrics-ci
           role-duration-seconds: 3600
           role-session-name: CostsToMetricsGithubAction
-
+      # - uses: hashicorp/setup-terraform@v1
       - name: Lint Terraform
         id: tf_lint
         run: terraform fmt -check -recursive
