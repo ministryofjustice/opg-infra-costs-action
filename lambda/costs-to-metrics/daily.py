@@ -3,18 +3,21 @@ import datetime
 from datetime import timezone
 import logging
 import dateutil.relativedelta
-from aws_xray_sdk.core import patch_all
+from aws_xray_sdk.core import patch_all, xray_recorder
 from aws.costs import Costs
 from send.send import send
 
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+xray_recorder.begin_segment('costs_to_opg_metrics')
 patch_all()
 
 
 def handler(event, context):
+    xray_recorder.begin_subsegment('costs_to_queue')
     daily_costs()
+    xray_recorder.end_subsegment()
 
 
 def daily_costs():

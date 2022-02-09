@@ -29,6 +29,7 @@ module "costs_to_sqs" {
 
 
 data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
+  provider = aws.management
   statement {
     sid    = "AllowCostExplorerGet"
     effect = "Allow"
@@ -37,7 +38,6 @@ data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
     ]
     resources = ["*"]
   }
-  provider = aws.management
   statement {
     sid       = "AllowSQSAccess"
     effect    = "Allow"
