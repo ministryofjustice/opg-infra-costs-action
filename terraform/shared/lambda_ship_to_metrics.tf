@@ -68,16 +68,32 @@ data "aws_iam_policy_document" "ship_to_opg_metrics_lambda_function_policy" {
     ]
   }
   statement {
-    sid       = "AllowKMSDecrypt"
-    effect    = "Allow"
-    resources = [data.aws_kms_alias.opg_metrics_api_key_encryption.target_key_arn]
+    sid    = "AllowKMSDecrypt"
+    effect = "Allow"
+    resources = [
+      data.aws_kms_alias.opg_metrics_api_key_encryption.target_key_arn,
+      aws_kms_key.ship_to_metrics_queue.arn
+    ]
     actions = [
       "kms:Decrypt",
+    ]
+  }
+  statement {
+    sid       = "AllowXRayAccess"
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
     ]
   }
 }
 
 resource "aws_lambda_event_source_mapping" "ship_to_opg_metrics" {
+  batch_size       = 1
   count            = var.enable_ship_to_metrics ? 1 : 0
   event_source_arn = aws_sqs_queue.ship_to_opg_metrics.arn
   function_name    = module.ship_to_opg_metrics.lambda_function.arn
