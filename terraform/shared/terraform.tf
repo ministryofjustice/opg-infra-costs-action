@@ -59,6 +59,14 @@ data "aws_caller_identity" "current" {
   provider = aws.management
 }
 
+data "aws_caller_identity" "shared_development" {
+  provider = aws.shared_development
+}
+
 data "aws_region" "current" {
   provider = aws.management
+}
+
+data "aws_region" "shared_development" {
+  provider = aws.shared_development
 }

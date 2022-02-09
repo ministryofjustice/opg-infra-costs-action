@@ -9,11 +9,11 @@ data "aws_ecr_image" "ship_to_opg_metrics" {
   provider        = aws.management
 }
 
-# data "aws_secretsmanager_secret_version" "opg_metrics_api_key" {
-#   secret_id     = data.aws_secretsmanager_secret.opg_metrics_api_key.id
-#   version_stage = "AWSCURRENT"
-#   provider      = aws.shared_development
-# }
+data "aws_secretsmanager_secret_version" "opg_metrics_api_key" {
+  secret_id     = data.aws_secretsmanager_secret.opg_metrics_api_key.id
+  version_stage = "AWSCURRENT"
+  provider      = aws.shared_development
+}
 
 data "aws_secretsmanager_secret" "opg_metrics_api_key" {
   name     = "opg-metrics-api-key/costs-to-metrics-development"
@@ -33,7 +33,7 @@ module "ship_to_opg_metrics" {
   working_directory = "/var/task"
   environment_variables = {
     "OPG_METRICS_URL" : "https://development.api.metrics.opg.service.justice.gov.uk"
-    "SECRET_ARN" : data.aws_secretsmanager_secret.opg_metrics_api_key.arn
+    "SECRET_ARN" : data.aws_secretsmanager_secret_version.opg_metrics_api_key.arn
   }
   image_uri                           = "${data.aws_ecr_repository.ship_to_opg_metrics.repository_url}@${data.aws_ecr_image.ship_to_opg_metrics.image_digest}"
   ecr_arn                             = data.aws_ecr_repository.ship_to_opg_metrics.arn
@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "ship_to_opg_metrics_lambda_function_policy" {
     sid    = "AllowSecretsManagerAccess"
     effect = "Allow"
     resources = [
-      data.aws_secretsmanager_secret.opg_metrics_api_key.arn,
+      "arn:aws:secretsmanager:${data.aws_region.shared_development.name}:${data.aws_caller_identity.shared_development.account_id}:secret:${data.aws_secretsmanager_secret.opg_metrics_api_key.name}",
     ]
     actions = [
       "secretsmanager:GetSecretValue",
