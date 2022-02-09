@@ -20,6 +20,7 @@ data "aws_secretsmanager_secret" "opg_metrics_api_key" {
   provider = aws.shared_development
 }
 
+
 data "aws_kms_alias" "opg_metrics_api_key_encryption" {
   name     = "alias/opg_metrics_api_key_encryption"
   provider = aws.shared_development
@@ -60,8 +61,7 @@ data "aws_iam_policy_document" "ship_to_opg_metrics_lambda_function_policy" {
     sid    = "AllowSecretsManagerAccess"
     effect = "Allow"
     resources = [
-      data.aws_secretsmanager_secret.opg_metrics_api_key.arn,
-      "arn:aws:secretsmanager:eu-west-1:679638075911:secret:opg-metrics-api-key/costs-to-metrics-development"
+      data.aws_secretsmanager_secret_version.opg_metrics_api_key.arn,
     ]
     actions = [
       "secretsmanager:GetSecretValue",
