@@ -16,8 +16,8 @@ patch_all()
 
 def handler(event, context):
     subsegment = xray_recorder.begin_subsegment('costs_to_queue')
+    subsegment.put_annotation('service', 'opg_metrics')
     daily_costs()
-    subsegment.put_annotation('service', 'costs_to_opg_metrics')
     xray_recorder.end_subsegment()
 
 
