@@ -80,6 +80,7 @@ data "aws_iam_policy_document" "ship_to_metrics_queue_kms" {
       type = "AWS"
       identifiers = [
         module.costs_to_sqs.lambda_iam_role.arn,
+        module.ship_to_opg_metrics.lambda_iam_role.arn,
       ]
     }
   }
