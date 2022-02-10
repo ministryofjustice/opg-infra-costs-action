@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "ship_to_opg_metrics_lambda_function_policy" {
     sid    = "AllowSecretsManagerAccess"
     effect = "Allow"
     resources = [
-      "arn:aws:secretsmanager:${data.aws_region.shared_development.name}:${data.aws_caller_identity.shared_development.account_id}:secret:${data.aws_secretsmanager_secret.opg_metrics_api_key.name}",
+      "arn:aws:secretsmanager:${data.aws_region.shared_development.name}:${data.aws_caller_identity.shared_development.account_id}:secret:${data.aws_secretsmanager_secret.opg_metrics_api_key.name}*",
     ]
     actions = [
       "secretsmanager:GetSecretValue",
