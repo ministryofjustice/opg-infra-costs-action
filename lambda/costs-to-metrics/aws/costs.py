@@ -65,7 +65,7 @@ class Costs():
                                 # this is actually the account id
                                 'Project': self.service_name_correction(row['Keys'][1]),
                                 'Category': 'costs',
-                                'SubCategory': granularity.lower(),
+                                'Subcategory': granularity.lower(),
                                 # int - str wrapper is to get a millisecond timestamp,
                                 # but push it as a string
                                 'Time': str(int(date.timestamp() * 1000)),
