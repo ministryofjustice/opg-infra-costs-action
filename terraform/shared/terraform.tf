@@ -27,7 +27,8 @@ variable "DEFAULT_ROLE" {
 }
 
 locals {
-  management = "311462405659"
+  management         = "311462405659"
+  shared_development = "679638075911"
 }
 
 provider "aws" {
@@ -42,10 +43,30 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  region = "eu-west-1"
+  alias  = "shared_development"
+  default_tags {
+    tags = merge(local.mandatory_tags, local.optional_tags)
+  }
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.shared_development}:role/${var.DEFAULT_ROLE}"
+    session_name = "terraform-session"
+  }
+}
+
 data "aws_caller_identity" "current" {
   provider = aws.management
 }
 
+data "aws_caller_identity" "shared_development" {
+  provider = aws.shared_development
+}
+
 data "aws_region" "current" {
   provider = aws.management
+}
+
+data "aws_region" "shared_development" {
+  provider = aws.shared_development
 }
