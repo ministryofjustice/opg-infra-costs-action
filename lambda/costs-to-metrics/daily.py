@@ -32,7 +32,9 @@ def daily_costs():
     logger.info("Getting cost data between %s and %s", start, end)
 
     aws_costs = Costs()
+
     results = aws_costs.get(start, end)
+
     logger.info(results)
 
     send(results)

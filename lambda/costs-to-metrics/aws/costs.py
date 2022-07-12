@@ -3,9 +3,7 @@ import sys
 import logging
 import datetime
 from dateutil import parser
-from aws.assume_role import AssumeRole
-import botocore
-import boto3
+from assume_role import AssumeRole
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -85,6 +83,7 @@ class Costs():
                                 "MeasureValueType": "DOUBLE"
                             }
                         })
+        assume_role.close_session()
         return results
 
     def get(self, start: datetime, end: datetime, granularity: str = 'DAILY') -> list:
