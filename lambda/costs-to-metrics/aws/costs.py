@@ -1,11 +1,11 @@
+from msilib.schema import Class
 import sys
 import logging
-import os
 import datetime
 from dateutil import parser
+from aws.assume_role import AssumeRole
 import botocore
 import boto3
-from assume_role import AssumeRole
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -40,71 +40,51 @@ class Costs():
         for multiple accounts at once
         """
 
-        role_arn = os.getenv('COST_EXPLORER_ROLE')
         assume_role = AssumeRole()
-        session = assume_role.start_session(role_arn)
-        try:
-            client = boto3.client(
-                'ce',
-                region_name='eu-west-1',
-                aws_access_key_id=session['Credentials']['AccessKeyId'],
-                aws_secret_access_key=session['Credentials']['SecretAccessKey'],
-                aws_session_token=session['Credentials']['SessionToken']
-            )
+        cost_explorer_client = assume_role.create_client('ce')
 
-            results = []
-            response = client.get_cost_and_usage(
-                Granularity=granularity,
-                TimePeriod={
-                    'Start': start.strftime('%Y-%m-%d'),
-                    'End': end.strftime('%Y-%m-%d')
-                },
-                Metrics=['UnblendedCost'],
-                GroupBy=[{
-                    'Type': 'DIMENSION',
-                    'Key': 'SERVICE'
-                }, {
-                    'Type': 'DIMENSION',
-                    'Key': 'LINKED_ACCOUNT'
-                }]
-            )
+        results = []
+        response = cost_explorer_client.get_cost_and_usage(
+            Granularity=granularity,
+            TimePeriod={
+                'Start': start.strftime('%Y-%m-%d'),
+                'End': end.strftime('%Y-%m-%d')
+            },
+            Metrics=['UnblendedCost'],
+            GroupBy=[{
+                'Type': 'DIMENSION',
+                'Key': 'SERVICE'
+            }, {
+                'Type': 'DIMENSION',
+                'Key': 'LINKED_ACCOUNT'
+            }]
+        )
 
-            if 'ResultsByTime' in response:
-                for item in response['ResultsByTime']:
-                    # get the date for this block of costs, making sure to force UTC
-                    date = parser.parse(item['TimePeriod']['Start']).replace(
-                        tzinfo=datetime.timezone.utc)
-                    # if we have cost data, loop over it
-                    if 'Groups' in item:
-                        for row in item['Groups']:
-                            value = float(
-                                row['Metrics']['UnblendedCost']['Amount'])
-                            # generate package for sending in form that it likes
-                            results.append({
-                                'metric': {
-                                    # this is actually the account id
-                                    'Project': self.service_name_correction(row['Keys'][1]),
-                                    'Category': 'costs',
-                                    'Subcategory': granularity.lower(),
-                                    # int - str wrapper is to get a millisecond timestamp,
-                                    # but push it as a string
-                                    'Time': str(int(date.timestamp() * 1000)),
-                                    'MeasureName': self.service_name_correction(row['Keys'][0]),
-                                    'MeasureValue': f"{value:.3f}",
-                                    "MeasureValueType": "DOUBLE"
-                                }
-                            })
-        except botocore.exceptions.ClientError as error:
-            logger.info(
-                "Error: %s. %s",
-                error.response['Error']['Code'],
-                error.response['Error']['Message']
-            )
-
-            assume_role.close_session()
-            sys.exit(1)
-
-        assume_role.close_session()
+        if 'ResultsByTime' in response:
+            for item in response['ResultsByTime']:
+                # get the date for this block of costs, making sure to force UTC
+                date = parser.parse(item['TimePeriod']['Start']).replace(
+                    tzinfo=datetime.timezone.utc)
+                # if we have cost data, loop over it
+                if 'Groups' in item:
+                    for row in item['Groups']:
+                        value = float(
+                            row['Metrics']['UnblendedCost']['Amount'])
+                        # generate package for sending in form that it likes
+                        results.append({
+                            'metric': {
+                                # this is actually the account id
+                                'Project': self.service_name_correction(row['Keys'][1]),
+                                'Category': 'costs',
+                                'Subcategory': granularity.lower(),
+                                # int - str wrapper is to get a millisecond timestamp,
+                                # but push it as a string
+                                'Time': str(int(date.timestamp() * 1000)),
+                                'MeasureName': self.service_name_correction(row['Keys'][0]),
+                                'MeasureValue': f"{value:.3f}",
+                                "MeasureValueType": "DOUBLE"
+                            }
+                        })
         return results
 
     def get(self, start: datetime, end: datetime, granularity: str = 'DAILY') -> list:
