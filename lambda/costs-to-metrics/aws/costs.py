@@ -1,6 +1,12 @@
+from msilib.schema import Class
+import sys
+import logging
 import datetime
 from dateutil import parser
-import boto3
+from assume_role import AssumeRole
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 class Costs():
@@ -31,9 +37,12 @@ class Costs():
         Group by the account id as well as the service, presuming this would run
         for multiple accounts at once
         """
-        client = boto3.client('ce')
+
+        assume_role = AssumeRole()
+        cost_explorer_client = assume_role.create_client('ce')
+
         results = []
-        response = client.get_cost_and_usage(
+        response = cost_explorer_client.get_cost_and_usage(
             Granularity=granularity,
             TimePeriod={
                 'Start': start.strftime('%Y-%m-%d'),
@@ -74,6 +83,7 @@ class Costs():
                                 "MeasureValueType": "DOUBLE"
                             }
                         })
+        assume_role.close_session()
         return results
 
     def get(self, start: datetime, end: datetime, granularity: str = 'DAILY') -> list:
