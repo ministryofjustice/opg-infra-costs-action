@@ -9,7 +9,7 @@ from send.send import send
 
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logging.basicConfig(encoding='utf-8', level=logging.INFO)
 xray_recorder.begin_segment('costs_to_opg_metrics')
 patch_all()
 

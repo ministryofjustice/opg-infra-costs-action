@@ -1,12 +1,11 @@
-from msilib.schema import Class
 import sys
 import logging
 import datetime
 from dateutil import parser
-from assume_role import AssumeRole
+from aws.cross_account_client import CrossAccountClient
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logging.basicConfig(encoding='utf-8', level=logging.INFO)
 
 
 class Costs():
@@ -38,53 +37,50 @@ class Costs():
         for multiple accounts at once
         """
 
-        assume_role = AssumeRole()
-        cost_explorer_client = assume_role.create_client('ce')
+        with CrossAccountClient('ce') as cost_explorer_client:
+            results = []
+            response = cost_explorer_client.get_cost_and_usage(
+                Granularity=granularity,
+                TimePeriod={
+                    'Start': start.strftime('%Y-%m-%d'),
+                    'End': end.strftime('%Y-%m-%d')
+                },
+                Metrics=['UnblendedCost'],
+                GroupBy=[{
+                    'Type': 'DIMENSION',
+                    'Key': 'SERVICE'
+                }, {
+                    'Type': 'DIMENSION',
+                    'Key': 'LINKED_ACCOUNT'
+                }]
+            )
 
-        results = []
-        response = cost_explorer_client.get_cost_and_usage(
-            Granularity=granularity,
-            TimePeriod={
-                'Start': start.strftime('%Y-%m-%d'),
-                'End': end.strftime('%Y-%m-%d')
-            },
-            Metrics=['UnblendedCost'],
-            GroupBy=[{
-                'Type': 'DIMENSION',
-                'Key': 'SERVICE'
-            }, {
-                'Type': 'DIMENSION',
-                'Key': 'LINKED_ACCOUNT'
-            }]
-        )
-
-        if 'ResultsByTime' in response:
-            for item in response['ResultsByTime']:
-                # get the date for this block of costs, making sure to force UTC
-                date = parser.parse(item['TimePeriod']['Start']).replace(
-                    tzinfo=datetime.timezone.utc)
-                # if we have cost data, loop over it
-                if 'Groups' in item:
-                    for row in item['Groups']:
-                        value = float(
-                            row['Metrics']['UnblendedCost']['Amount'])
-                        # generate package for sending in form that it likes
-                        results.append({
-                            'metric': {
-                                # this is actually the account id
-                                'Project': self.service_name_correction(row['Keys'][1]),
-                                'Category': 'costs',
-                                'Subcategory': granularity.lower(),
-                                # int - str wrapper is to get a millisecond timestamp,
-                                # but push it as a string
-                                'Time': str(int(date.timestamp() * 1000)),
-                                'MeasureName': self.service_name_correction(row['Keys'][0]),
-                                'MeasureValue': f"{value:.3f}",
-                                "MeasureValueType": "DOUBLE"
-                            }
-                        })
-        assume_role.close_session()
-        return results
+            if 'ResultsByTime' in response:
+                for item in response['ResultsByTime']:
+                    # get the date for this block of costs, making sure to force UTC
+                    date = parser.parse(item['TimePeriod']['Start']).replace(
+                        tzinfo=datetime.timezone.utc)
+                    # if we have cost data, loop over it
+                    if 'Groups' in item:
+                        for row in item['Groups']:
+                            value = float(
+                                row['Metrics']['UnblendedCost']['Amount'])
+                            # generate package for sending in form that it likes
+                            results.append({
+                                'metric': {
+                                    # this is actually the account id
+                                    'Project': self.service_name_correction(row['Keys'][1]),
+                                    'Category': 'costs',
+                                    'Subcategory': granularity.lower(),
+                                    # int - str wrapper is to get a millisecond timestamp,
+                                    # but push it as a string
+                                    'Time': str(int(date.timestamp() * 1000)),
+                                    'MeasureName': self.service_name_correction(row['Keys'][0]),
+                                    'MeasureValue': f"{value:.3f}",
+                                    "MeasureValueType": "DOUBLE"
+                                }
+                            })
+            return results
 
     def get(self, start: datetime, end: datetime, granularity: str = 'DAILY') -> list:
         """
