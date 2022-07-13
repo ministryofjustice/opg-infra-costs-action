@@ -70,7 +70,6 @@ class Costs():
 
         with CrossAccountClient('ce') as cost_explorer_client:
             results = []
-
             linked_accounts_filter = {"And": []}
             dimensions = {"Dimensions": {"Key": "LINKED_ACCOUNT",
                                          "Values": LINKED_ACCOUNTS}}
