@@ -47,8 +47,7 @@ jobs:
         with:
           image-ref: costs-to-metrics:latest
           severity: 'HIGH,CRITICAL'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
+          format: 'sarif'
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy scan results to GitHub Security tab
