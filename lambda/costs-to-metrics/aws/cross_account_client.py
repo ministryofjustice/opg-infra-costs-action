@@ -39,5 +39,5 @@ class CrossAccountClient():
     def __exit__(self, type, value, traceback):
         logger.info(
             'Closing underlying endpoint connections for %s boto3 client...', self.client_name)
-        # The close method is not available for boto3 v1.20.4, the version used available in the lambda runtime
+        # The close method is not available for boto3 v1.20.4, the version provided in the lambda runtime
         # self.sts_client.close()
