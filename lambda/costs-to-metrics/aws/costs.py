@@ -38,12 +38,21 @@ class Costs():
 
         with CrossAccountClient('ce') as cost_explorer_client:
             results = []
+            linked_accounts = [
+                "311462405659",
+                "679638075911"
+            ]
+            linked_accounts_filter = {"And": []}
+            dimensions = {"Dimensions": {"Key": "LINKED_ACCOUNT",
+                                         "Values": linked_accounts}}
+            linked_accounts_filter = dimensions.copy()
             response = cost_explorer_client.get_cost_and_usage(
                 Granularity=granularity,
                 TimePeriod={
                     'Start': start.strftime('%Y-%m-%d'),
                     'End': end.strftime('%Y-%m-%d')
                 },
+                Filter=linked_accounts_filter,
                 Metrics=['UnblendedCost'],
                 GroupBy=[{
                     'Type': 'DIMENSION',
