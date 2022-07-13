@@ -103,8 +103,6 @@ jobs:
     name: "Terraform Plan/Apply"
     runs-on: ubuntu-latest
     needs: build
-    outputs:
-      tag: ${{ needs.build.bump_version.outputs.tag }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -137,8 +135,8 @@ jobs:
 
       - name: Terraform Plan
         env:
-          TF_VAR_costs_to_sqs_lambda_container_version: needs.build.bump_version.outputs.tag
-          TF_VAR_ship_to_queue_lambda_container_version: needs.build.bump_version.outputs.tag
+          TF_VAR_costs_to_sqs_lambda_container_version: needs.build.outputs.tag
+          TF_VAR_ship_to_queue_lambda_container_version: needs.build.outputs.tag
 
         run: |
           terraform init -input=false
