@@ -9,6 +9,7 @@ logger = logging.getLogger()
 class CrossAccountClient():
 
     def __init__(self, client_name: str):
+        logger.info('boto3 version: %s', boto3.__version__)
         self.sts_client = boto3.client('sts')
         self.role_arn = os.getenv(
             'COST_EXPLORER_ROLE', 'arn:aws:iam::311462405659:role/operator')
