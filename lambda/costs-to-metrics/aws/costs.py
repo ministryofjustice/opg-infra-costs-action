@@ -39,8 +39,37 @@ class Costs():
         with CrossAccountClient('ce') as cost_explorer_client:
             results = []
             linked_accounts = [
-                "311462405659",
-                "679638075911"
+                "248804316466",  # digideps-development
+                "454262938596",  # digideps-preproduction
+                "515688267891",  # digideps-production
+                "631181914621",  # identity
+                "550790013665",  # lpa-production
+                "311462405659",  # management
+                "705467933182",  # serve-opg-development
+                "540070264006",  # serve-opg-preproduction
+                "933639921819",  # serve-opg-production
+                "357766484745",  # opg-shared
+                "792093328875",  # refunds-development
+                "574983609246",  # refunds-production
+                "679638075911",  # shared-development
+                "997462338508",  # shared-production
+                "288342028542",  # sirius-spectrum-development
+                "649098267436",  # sirius-spectrum-production
+                "653761790766",  # sirius-development
+                "492687888235",  # sirius-preproduction
+                "313879017102",  # sirius-production
+                "367815980639",  # use-my-lpa-development
+                "888228022356",  # use-my-lpa-preproduction
+                "690083044361",  # use-my-lpa-production
+                "050256574573",  # moj-lpa-development
+                "987830934591",  # moj-lpa-preproduction
+                "980242665824",  # moj-lpa-production
+                "936779158973",  # moj-refunds-development
+                "764856231715",  # moj-refunds-preproduction
+                "805626386523",  # moj-refunds-production
+                "132068124730",  # opg-sirius-backup
+                "995199299616",  # opg-sandbox
+                "238302996107"   # opg-backups
             ]
             linked_accounts_filter = {"And": []}
             dimensions = {"Dimensions": {"Key": "LINKED_ACCOUNT",
