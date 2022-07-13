@@ -1,6 +1,6 @@
 resource "aws_iam_role" "lambda_role" {
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
-  name_prefix        = var.lambda_name
+  name               = var.lambda_name
 }
 
 data "aws_iam_policy_document" "lambda_assume" {

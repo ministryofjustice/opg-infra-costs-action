@@ -16,6 +16,7 @@ module "costs_to_sqs" {
   working_directory = "/var/task"
   environment_variables = {
     "QUEUE_URL" : aws_sqs_queue.ship_to_opg_metrics.url,
+    "COST_EXPLORER_ROLE" : "arn:aws:iam::295814833350:role/CostExplorerAccessReadOnly",
     "CHUNK_SIZE" : 20,
   }
   image_uri                           = "${data.aws_ecr_repository.costs_to_sqs.repository_url}@${data.aws_ecr_image.costs_to_sqs.image_digest}"
@@ -58,6 +59,14 @@ data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
       "xray:GetSamplingRules",
       "xray:GetSamplingTargets",
       "xray:GetSamplingStatisticSummaries",
+    ]
+  }
+  statement {
+    sid       = "CrossAccountAssumeRole"
+    effect    = "Allow"
+    resources = ["arn:aws:iam::295814833350:role/CostExplorerAccessReadOnly"]
+    actions = [
+      "sts:AssumeRole",
     ]
   }
 }
