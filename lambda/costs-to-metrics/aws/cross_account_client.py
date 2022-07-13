@@ -10,8 +10,8 @@ class CrossAccountClient():
 
     def __init__(self, client_name: str):
         self.sts_client = boto3.client('sts')
-        self.role_arn = 'arn:aws:iam::311462405659:role/breakglass'
-        # self.role_arn = os.getenv('COST_EXPLORER_ROLE')
+        self.role_arn = os.getenv(
+            'COST_EXPLORER_ROLE', 'arn:aws:iam::311462405659:role/operator')
         self.client_name = client_name
 
     def start_session(self, role_arn: str):
