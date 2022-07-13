@@ -4,7 +4,6 @@ import boto3
 
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 
 def sqs_send_message(message: str):
