@@ -9,7 +9,7 @@ from send.send import send
 
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logging.basicConfig(encoding='utf-8', level=logging.INFO)
 xray_recorder.begin_segment('costs_to_opg_metrics')
 patch_all()
 
@@ -32,7 +32,9 @@ def daily_costs():
     logger.info("Getting cost data between %s and %s", start, end)
 
     aws_costs = Costs()
+
     results = aws_costs.get(start, end)
+
     logger.info(results)
 
     send(results)
