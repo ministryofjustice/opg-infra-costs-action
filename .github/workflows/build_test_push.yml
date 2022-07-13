@@ -147,6 +147,9 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
+        env:
+          TF_VAR_costs_to_sqs_lambda_container_version: needs.build.bump_version.outputs.tag
+          TF_VAR_ship_to_queue_lambda_container_version: needs.build.bump_version.outputs.tag
         run: |
           terraform init -input=false
           terraform apply -lock-timeout=300s -input=false -auto-approve -parallelism=30
