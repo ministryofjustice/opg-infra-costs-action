@@ -5,7 +5,6 @@ from dateutil import parser
 from aws.cross_account_client import CrossAccountClient
 
 logger = logging.getLogger()
-logging.basicConfig(encoding='utf-8', level=logging.INFO)
 
 
 class Costs():

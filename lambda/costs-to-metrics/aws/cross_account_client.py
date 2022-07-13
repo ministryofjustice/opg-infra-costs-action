@@ -4,14 +4,14 @@ import boto3
 
 
 logger = logging.getLogger()
-logging.basicConfig(encoding='utf-8', level=logging.INFO)
 
 
 class CrossAccountClient():
 
     def __init__(self, client_name: str):
         self.sts_client = boto3.client('sts')
-        self.role_arn = os.getenv('COST_EXPLORER_ROLE')
+        self.role_arn = 'arn:aws:iam::311462405659:role/breakglass'
+        # self.role_arn = os.getenv('COST_EXPLORER_ROLE')
         self.client_name = client_name
 
     def start_session(self, role_arn: str):
@@ -20,10 +20,11 @@ class CrossAccountClient():
             RoleSessionName='opg-costs-to-metrics-lambda',
             DurationSeconds=900,
         )
-        logger.info(session)
         return session
 
     def __enter__(self):
+        logger.info(
+            'Creating cross account session for %s boto3 client...', self.client_name)
         client_session = self.start_session(self.role_arn)
         boto3_client = boto3.client(
             self.client_name,
