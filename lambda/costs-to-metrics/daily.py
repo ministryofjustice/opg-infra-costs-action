@@ -15,7 +15,6 @@ logHandler = logging.StreamHandler()
 formatter = CustomJsonFormatter('%(timestamp)s %(level)s %(name)s %(message)s')
 logHandler.setFormatter(formatter)
 logger.addHandler(logHandler)
-logging.basicConfig(encoding='utf-8', level=logging.INFO)
 xray_recorder.begin_segment('costs_to_opg_metrics')
 patch_all()
 
