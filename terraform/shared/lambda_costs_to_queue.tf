@@ -70,3 +70,22 @@ data "aws_iam_policy_document" "costs_to_sqs_lambda_function_policy" {
     ]
   }
 }
+
+resource "aws_cloudwatch_event_rule" "costs_to_sqs_schedule" {
+  name                = "costs-to-sqs-lambda"
+  description         = "Kicks off costs to SQS lambda"
+  schedule_expression = "cron(0 3 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "costs_to_sqs_target" {
+  rule = aws_cloudwatch_event_rule.costs_to_sqs_schedule.name
+  arn  = module.costs_to_sqs.lambda_function.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_costs_to_sqs" {
+  statement_id  = "AllowExecutionFromCloudWatchChecklists"
+  action        = "lambda:InvokeFunction"
+  function_name = module.costs_to_sqs.lambda_function.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.costs_to_sqs_schedule.arn
+}
